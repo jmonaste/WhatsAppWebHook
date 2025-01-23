@@ -12,11 +12,11 @@ app = FastAPI()
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "")
 
 @app.get("/webhook")
-def verify_webhook(
-    hub_mode: str = None,
-    hub_challenge: str = None,
-    hub_verify_token: str = None
-):
+def verify_webhook(request: Request):
+    hub_mode = request.query_params.get("hub.mode")
+    hub_challenge = request.query_params.get("hub.challenge")
+    hub_verify_token = request.query_params.get("hub.verify_token")
+    
     print("Received verify token:", hub_verify_token)
     if hub_mode == "subscribe" and hub_verify_token == VERIFY_TOKEN:
         return PlainTextResponse(content=hub_challenge, status_code=200)
